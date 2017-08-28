@@ -9,6 +9,9 @@
   </head>
 
   <body>
+    <% current_user && (%>
+    <%= current_user.username %>
+    <%= button_to 'Sign Out', session_url, method: :delete) %>
     <%= yield %>
   </body>
 </html>
