@@ -23,6 +23,22 @@ feature 'the signup process' do
       click_button 'Sign Up'
       expect(page).to have_content 'Apple'
     end
+
+    scenario 'signing up without username will render errors' do
+      visit new_user_url
+      fill_in 'Username', with: ''
+      fill_in 'Password', with: 'password'
+      click_button 'Sign Up'
+      expect(page).to have_content "Username can't be blank"
+    end
+
+    scenario 'signing up without username will render errors' do
+      visit new_user_url
+      fill_in 'Username', with: 'Apple'
+      fill_in 'Password', with: ''
+      click_button 'Sign Up'
+      expect(page).to have_content "Password is too short"
+    end
   end
 end
 

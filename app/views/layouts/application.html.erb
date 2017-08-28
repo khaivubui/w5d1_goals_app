@@ -12,6 +12,11 @@
     <% current_user && (%>
     <%= current_user.username %>
     <%= button_to 'Sign Out', session_url, method: :delete) %>
+
+    <% flash[:errors] && flash[:errors].each do |e| %>
+    <%= e %>
+    <br>
+    <% end %>
     <%= yield %>
   </body>
 </html>
