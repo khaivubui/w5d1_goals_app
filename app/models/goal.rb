@@ -12,10 +12,14 @@
 #
 
 class Goal < ApplicationRecord
-  validates :user_id, :body, :goal_type, :completed, presence: true
+  validates :user_id, :body, :goal_type, presence: true
   validates :goal_type, inclusion: {
     in: %w(PRIVATE PUBLIC),
     message: 'Invalid type'
+  }
+  validates :completed, inclusion: {
+    in: [true, false],
+    message: 'Invalid completion status'
   }
   after_initialize :ensure_completion_status, :ensure_goal_type
 

@@ -80,21 +80,26 @@ RSpec.describe GoalsController, type: :controller do
   end
 
   describe 'GET #edit' do
-    context 'when logged in' do
+    let!(:bang_dany) do
+      Goal.create(body: 'Bang Dany',
+      goal_type: 'PRIVATE',
+      user_id: jon.id)
+    end
 
+    context 'when logged in' do
       before :each do
         allow(controller).to receive(:current_user) { jon }
       end
 
       it 'render edit template' do
-        get :edit
+        get :edit, params: { id: bang_dany.id }
         expect(response).to render_template :edit
       end
     end
 
     context 'when not logged in' do
       it 'redirects to new_session_url' do
-        get :edit
+        get :edit, params: { id: bang_dany.id }
         expect(response).to redirect_to new_session_url
       end
     end
