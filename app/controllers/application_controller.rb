@@ -25,4 +25,8 @@ class ApplicationController < ActionController::Base
     @current_user ||= session[:session_token] &&
         User.find_by(session_token: session[:session_token])
   end
+
+  def ensure_logged_in
+    redirect_to new_session_url unless current_user
+  end
 end
