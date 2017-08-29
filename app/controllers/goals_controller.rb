@@ -43,6 +43,12 @@ class GoalsController < ApplicationController
     end
   end
 
+  def destroy
+    @goal = Goal.find(params[:id])
+    @goal.delete
+    redirect_to goals_url
+  end
+
   private
 
   def goal_params

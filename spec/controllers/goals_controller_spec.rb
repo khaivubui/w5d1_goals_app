@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe GoalsController, type: :controller do
   let(:jon) { User.create(username: 'JonSnow', password: 'password') }
-  
+
   describe 'GET #index' do
     context 'when logged in' do
       it 'renders :index' do
@@ -183,4 +183,22 @@ RSpec.describe GoalsController, type: :controller do
     end
   end
 
+  describe 'DELETE #destroy' do
+    let(:marry_dany) do
+      Goal.create(body: 'Marry Dany',
+                  goal_type: 'PRIVATE',
+                  user_id: jon.id)
+    end
+
+    before :each do
+      allow(controller).to receive(:current_user) { jon }
+    end
+
+    it 'deletes the goal from the database' do
+      id = marry_dany.id
+      delete :destroy, params: { id: id }
+      expect(Goal.exists?(id)).to be false
+      expect(response).to redirect_to goals_url
+    end
+  end
 end
