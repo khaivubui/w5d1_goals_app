@@ -2,6 +2,48 @@ require 'rails_helper'
 
 RSpec.describe GoalsController, type: :controller do
   let(:jon) { User.create(username: 'JonSnow', password: 'password') }
+  
+  describe 'GET #index' do
+    context 'when logged in' do
+      it 'renders :index' do
+        allow(controller).to receive(:current_user) { jon }
+        get :index
+        expect(response).to render_template :index
+        expect(response).to have_http_status 200
+      end
+    end
+
+    context 'when not logged in' do
+      it 'redirects to new_session_url' do
+        get :index
+        expect(response).to redirect_to new_session_url
+      end
+    end
+  end
+
+  describe 'GET #show' do
+    let(:bang_dany) do
+      Goal.create(body: 'Bang Dany',
+      goal_type: 'PRIVATE',
+      user_id: jon.id)
+    end
+
+    context 'when logged in' do
+      it 'renders :show' do
+        allow(controller).to receive(:current_user) { jon }
+        get :show, params: { id: bang_dany.id }
+        expect(response).to render_template :show
+        expect(response).to have_http_status 200
+      end
+    end
+
+    context 'when not logged in' do
+      it 'redirects to new_session_url' do
+        get :show, params: { id: bang_dany.id }
+        expect(response).to redirect_to new_session_url
+      end
+    end
+  end
 
   describe 'GET #new' do
     context 'when logged in' do
@@ -117,12 +159,28 @@ RSpec.describe GoalsController, type: :controller do
     end
 
     it 'updates the goal when given appropriate params' do
+      id = bang_dany.id
       patch :update, params: {
+        id: id,
         goal: {
-          body: 'Bang Dany',
-          goal_type: 'PRIVATE'
+          completed: true
         }
       }
+      expect(Goal.find(id).completed).to be true
+      expect(response).to redirect_to goal_url(bang_dany)
+    end
+
+    it 'render errors and does not update when given bad params' do
+      patch :update, params: {
+        id: bang_dany.id,
+        goal: {
+          body: ''
+        }
+      }
+      expect(bang_dany.body).to eq 'Bang Dany'
+      expect(response).to render_template :edit
+      expect(flash[:errors]).not_to be_empty
     end
   end
+
 end
